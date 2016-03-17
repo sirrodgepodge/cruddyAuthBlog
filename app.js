@@ -4,10 +4,16 @@ const express = require('express'), // used to
       cookieParser = require('cookie-parser'),
       bodyParser = require('body-parser'),
       favicon = require('serve-favicon'),
-      cors = require('cors');
+      cors = require('cors'),
+      dotenv = require('dotenv');
 
 
-const app = express(), // Express needs to be instantiated, it's possible to run multiple Express instances in the same node app and have them listen on different ports
+// Grabs key-value pairs from ".env" folder and sets keys as properties on "process.env" object accessable anywhere in the app
+dotenv.config();
+
+
+// Express needs to be instantiated, it's possible to run multiple Express instances in the same node app and have them listen on different ports
+const app = express(),
       serverPort = process.env.port || 3000; // If port has been provided by environmental variables use that, else defauly to 3000
 
 
@@ -34,8 +40,12 @@ if(process.env.NODE_ENV !== 'production')
   app.use(logger('dev'));
 
 
-// Bring in routes from routes folder
-app.use('/', require('./routes')); //// Note that we do not need to specify "index.js" inside of the "routes" folder, if file is unspecified "index.js" is default when foldr is required
+// Bring in Auth routes from auth folder
+app.use('/auth', require('./auth'));
+
+
+// Bring in API routes from routes folder
+app.use('/api', require('./routes')); //// Note that we do not need to specify "index.js" inside of the "routes" folder, if file is unspecified "index.js" is default when foldr is required
 
 
 // Serve index.html from root

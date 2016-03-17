@@ -1,0 +1,16 @@
+{
+  "name": "cruddyAuthBlog",
+  "version": "0.0.0",
+  "scripts": {
+    "start": "nodemon app --watch app --watch routes/index.js"
+  },
+  "dependencies": {
+    "body-parser": "~1.13.2",
+    "cookie-parser": "~1.3.5",
+    "cors": "~2.7.1",
+    "express": "~4.13.1",
+    "morgan": "~1.6.1",
+    "nodemon": "^1.9.1",
+    "serve-favicon": "~2.3.0"
+  }
+}

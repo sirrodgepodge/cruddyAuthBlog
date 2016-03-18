@@ -45,6 +45,10 @@ function crud() {
       .complete(function(data){
         $('#blog-list').append(blogPostHtmlGen(data.responseJSON));
 
+        // reset form values
+        $('#title').val('');
+        $('#body').val('');
+
         // add handlers to newly added buttons
         $('.delete-post[data-id='+ data.responseJSON._id +']').click(deleteHandler);
         $('.update-post[data-id='+ data.responseJSON._id +']').click(updateHandler);

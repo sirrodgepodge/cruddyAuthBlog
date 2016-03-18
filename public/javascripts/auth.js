@@ -27,8 +27,8 @@ function auth(){
 }
 
 function handleSuccessfulAuth(res){
-  console.log(res);
   const user = res.responseJSON;
+  console.log(user);
 
 
   if(user && user.email && !$('#email').hasClass('hide')){

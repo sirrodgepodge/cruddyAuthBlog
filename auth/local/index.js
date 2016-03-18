@@ -35,21 +35,32 @@ module.exports = function (app) {
         function authCb(err, user) {
             if (err) return next(err);
 
+            console.log(user);
+
             // since this is a silly example, if the user's login credentials don't match any users we just create a new user
             if (!user) {
-                console.log('creating user');
-                (new User(req.body)).saveAsync().then(storedUser =>
-                  res.status(200).json(_.merge(_.omit(storedUser.toObject(), ['password','salt']),{
-                    hasPassword: !!req.user.password
-                  }))
-                );
+                User.findOneAsync({ 'email': req.body.email })
+                .then(foundUser => {
+                  if(foundUser) {
+                    console.log('adding password to existing user');
+                    foundUser.password = req.body.password;
+                    return foundUser.saveAsync();
+                  } else {
+                    console.log('creating new user');
+                    return (new User(req.body)).saveAsync();
+                  }
+                }).then(storedUser => {
+                  res.status(200).json(_.merge(_.omit(storedUser[0].toObject(), ['password','salt']),{
+                    hasPassword: true
+                  }));
+                });
 
                 //// what we'd do normally is commented out here
                 // var error = new Error('Invalid login credentials.');
                 // error.status = 401;
                 // return next(error);
             } else {
-                console.log('found existings user');
+                console.log('found existing user');
                 // req.logIn will establish our session.
                 req.logIn(user, loginErr => {
                     if (loginErr) return next(loginErr);
@@ -63,7 +74,7 @@ module.exports = function (app) {
     });
 
 
-    //// normally we'd have a separate sign in route
+    //// normally we'd have a separate sign up route
     // A POST /signup route is created to handle signup.
     // app.post('/auth/signup', (req, res, next) =>
     //     User.findOne({ email: req.body.email })

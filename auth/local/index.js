@@ -30,35 +30,37 @@ module.exports = function (app) {
     // A POST /login route is created to handle login.
     app.post('/auth/login', function (req, res, next) {
 
+        console.log(req.body);
+
         passport.authenticate('local', authCb)(req, res, next);
 
         function authCb(err, user) {
             if (err) return next(err);
 
-            console.log(user);
-
             // since this is a silly example, if the user's login credentials don't match any users we just create a new user
             if (!user) {
                 User.findOneAsync({ 'email': req.body.email })
-                .then(foundUser => {
-                  if(foundUser) {
-                    console.log('adding password to existing user');
-                    foundUser.password = req.body.password;
-                    return foundUser.saveAsync();
-                  } else {
-                    console.log('creating new user');
-                    return (new User(req.body)).saveAsync();
-                  }
-                }).then(storedUser => {
-                  res.status(200).json(_.merge(_.omit(storedUser[0].toObject(), ['password','salt']),{
-                    hasPassword: true
-                  }));
-                });
+                    .then(foundUser => {
+                      if(foundUser) {
+                        console.log('foundUser',foundUser);
+                        console.log('adding password to existing user');
+                        foundUser.password = req.body.password;
+                        return foundUser.saveAsync();
+                      } else {
+                        console.log('creating new user');
+                        return (new User(req.body)).saveAsync();
+                      }
+                    }).then(storedUser => {
+                      console.log('storedUser',storedUser);
+                      res.status(200).json(_.merge(_.omit(storedUser[0].toObject(), ['password','salt']),{
+                        hasPassword: true
+                      }));
+                    });
 
-                //// what we'd do normally is commented out here
-                // var error = new Error('Invalid login credentials.');
-                // error.status = 401;
-                // return next(error);
+                    //// what we'd do normally is commented out here
+                    // var error = new Error('Invalid login credentials.');
+                    // error.status = 401;
+                    // return next(error);
             } else {
                 console.log('found existing user');
                 // req.logIn will establish our session.

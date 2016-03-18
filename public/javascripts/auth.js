@@ -12,7 +12,7 @@ function auth(){
       method: 'POST',
       url: '/auth/login',
       data: {
-        email: $('#email').val(),
+        email: $('#email').val() || window.user.email,
         password: $('#password').val()
       }
     }).complete(handleSuccessfulAuth);
@@ -65,6 +65,6 @@ function handleSuccessfulLogOut(res) {
   $('#facebook-auth').removeClass('hide');
   $('#login-section').removeClass('hide');
   $('#logout').removeClass('show');
-  $('#google-photo').attr('style', 'background-image: url("");');
-  $('#facebook-photo').attr('style', 'background-image: url("");');
+  $('#google-photo').attr('style', 'background-image: url("");').removeClass('show');
+  $('#facebook-photo').attr('style', 'background-image: url("");').removeClass('show');
 }

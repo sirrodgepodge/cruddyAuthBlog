@@ -118,7 +118,7 @@ a:focus {
 }
 
 .user-photo {
-    display: block;
+    display: none !important;
     margin: 10px 10px 0 0;
     width: 30px;
     height: 30px;
@@ -126,6 +126,10 @@ a:focus {
     border: 1px solid #f8e813;
     background: #000 no-repeat center /contain;
     cursor: default;
+}
+
+.user-photo.show {
+  display: block !important;
 }
 
 #blog-list {

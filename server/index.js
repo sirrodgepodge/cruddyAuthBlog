@@ -17,7 +17,7 @@ dotenv.config();
 
 // Express needs to be instantiated, it's possible to run multiple Express instances in the same node app and have them listen on different ports
 const app = express(),
-      serverPort = process.env.port || 3000; // If port has been provided by environmental variables use that, else defauly to 3000
+      serverPort = process.env.PORT || 3000; // If port has been provided by environmental variables use that, else defauly to 3000
 
 
 // Request parsing middleware

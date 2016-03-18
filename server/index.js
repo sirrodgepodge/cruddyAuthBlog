@@ -1,8 +1,11 @@
-const express = require('express'), // used to
+const express = require('express'),
+      session = require('express-session'),
+      MongoStore = require('connect-mongo')(session),
       path = require('path'), // handles smooth joining of file paths (inserts slashes where needed, prevents double slashes)
       logger = require('morgan'),
       cookieParser = require('cookie-parser'),
       bodyParser = require('body-parser'),
+      compression = require('compression'),
       favicon = require('serve-favicon'),
       cors = require('cors'),
       dotenv = require('dotenv');
@@ -27,12 +30,20 @@ app.use(cookieParser()); // allows cookie parsing (cookies are simple key value 
 app.use(cors());
 
 
+// gzips (technically compresses with zlib) responses to HTTP requests
+app.use(compression());
+
+
+// app root folder path
+const root = path.resolve(__dirname, '..');  // __dirname is a global variable available in any file and refers to that file's directory path
+
+
 // used to set favicon (little image next to page title in browser tab)
-app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
+app.use(favicon(path.join(root, 'public', 'favicon.ico')));
 
 
 // Set static folder
-app.use(express.static('./public'));
+app.use(express.static(path.join(root, 'public')));
 
 
 // Log requests to console
@@ -40,40 +51,41 @@ if(process.env.NODE_ENV !== 'production')
   app.use(logger('dev'));
 
 
-// Bring in Auth routes from auth folder
-app.use('/auth', require('./auth'));
+const startDbPromise = require(path.join(root,'db'))(process.env.DATABASE_URI);
 
+startDbPromise.then(() => {
+  // Bring in API routes from crud folder
+  app.use('/api', require(path.join(root, 'crud'))); //// Note that we do not need to specify "index.js" inside of the "crud" folder, if file is unspecified "index.js" is default when folder is required
 
-// Bring in API routes from routes folder
-app.use('/api', require('./routes')); //// Note that we do not need to specify "index.js" inside of the "routes" folder, if file is unspecified "index.js" is default when foldr is required
+  // Bring in Auth routes from auth folder (must feed in app as middlewares are added at this step)
+  require(path.join(root, 'auth'))(app);
 
+  // Serve index.html from root
+  app.get('/', (req, res, next) => res.sendFile('/index.html', {
+    root: path.join(root, 'public')
+  }));
 
-// Serve index.html from root
-app.get('/', (req, res, next) => res.sendFile('/index.html', {
-  root: './public'
-}));
+  // catch 404 and forward to error handler
+  app.use((req, res, next) => {
+    const err = new Error('Not Found');
+    err.status = 404;
+    next(err);
+  });
 
+  // Handle route errors
+  app.use((err, req, res, next) => {
+    console.error(err); // log to back end console
+    res.status(err.status || 500);
+    res.send(err.message); // send error message text to front end
+  });
 
-// catch 404 and forward to error handler
-app.use((req, res, next) => {
-  const err = new Error('Not Found');
-  err.status = 404;
-  next(err);
-});
+  // Launch server on port
+  app.listen(serverPort, (err, res) => err ?
+    handleError(err) :
+    console.log(`app served on port ${serverPort}`));
+})
+.catch(err => console.log(err));
 
-
-// Handle route errors
-app.use((err, req, res, next) => {
-  console.error(err); // log to back end console
-  res.status(err.status || 500);
-  res.send(err.message); // send error message text to front end
-});
-
-
-// Launch server on port
-app.listen(serverPort, (err, res) => err ?
-  handleError(err) :
-  console.log(`app served on port ${serverPort}`));
 
 // Note that I can define "handleError" down here and use it above, this is because "declarations" are hoisted in Javascript (can only be done with functions created with this syntax though)
 function handleError(err){
@@ -87,6 +99,7 @@ function handleError(err){
       process.exit(1);
       break;
     default:
-      throw err;
+      console.log(err);
+      process.exit(1);
   }
 }

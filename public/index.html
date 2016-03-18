@@ -3,11 +3,43 @@
   <head>
     <title>cruddyAuthBlog</title>
     <script src="https://code.jquery.com/jquery-2.2.1.min.js"></script>
-    <script type="text/javascript" href="/javascripts/index.js" async></script>
+    <script type="text/javascript" src="/javascripts/auth.js" async></script>
+    <script type="text/javascript" src="/javascripts/crud.js" async></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
     <link rel="stylesheet" href="/stylesheets/style.css">
   </head>
   <body>
-    <h1></h1>
-    <p>Welcome to</p>
+    <nav class="cruddy-auth-blog-nav navbar navbar-fixed-top">
+      <div class="navbar-header">
+        <span class="navbar-brand">cruddy<b>AuthBlog</b></span>
+      </div>
+      <ul class="nav navbar-nav navbar-right">
+        <li id="google-photo" class="nav user-photo"></li>
+        <li id="facebook-photo" class="nav user-photo"></li>
+        <li class="nav-button">
+          <span id="login-section">
+            LOG IN
+            &#10161;
+            <a id="google-auth" href="/auth/google"><i class="fa fa-google o-auth-btn"></i></a>
+            <a id="facebook-auth" href="/auth/facebook"><i class="fa fa-facebook o-auth-btn"></i></a>
+            <input class="nav-input" id="email" placeholder="email" type="text"></input>
+            <input class="nav-input" id="password" placeholder="password" type="password"></input>
+            <button id="local-auth" class="local-auth-button">Post LocalAuth</button>
+          </span>
+          <a id="logout" class="nav-button log-out-button" href="#">
+            LOG OUT
+          </a>
+        </li>
+      </ul>
+    </nav>
+    <ul id="blog-list">
+      <h1>Check out this Cruddy Auth Blog!</h1>
+      <li class="blog-add-post" data-id="">
+        <input id="title" class="blog-add-post-title" type="text" placeholder="Title"></input>
+        <textarea id="body" class="blog-add-post-body" placeholder="Body"></textarea>
+        <button id="add-post">Add Post</button>
+      </li>
+    </ul>
   </body>
 </html>

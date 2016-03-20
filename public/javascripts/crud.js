@@ -43,6 +43,7 @@ function crud() {
         data: requestData
       })
       .complete(function(data){
+        console.log(data);
         $('#blog-list').append(blogPostHtmlGen(data.responseJSON));
 
         // reset form values
@@ -63,7 +64,6 @@ function crud() {
           createdDate: new Date()
         }
       }).complete(function(data){
-        console.log(data);
         $('#' + updateId).replaceWith(blogPostHtmlGen(data.responseJSON));
 
         // remove update Id from blog editor

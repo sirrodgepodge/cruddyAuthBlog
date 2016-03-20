@@ -76,7 +76,7 @@ startDbPromise.then(() => {
   app.use((err, req, res, next) => {
     console.error(err); // log to back end console
     res.status(err.status || 500);
-    res.send(JSON.stringify(req)); // send error message text to front end
+    res.send(err.message); // send error message text to front end
   });
 
   // Launch server on port

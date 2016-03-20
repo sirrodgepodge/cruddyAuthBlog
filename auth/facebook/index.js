@@ -22,12 +22,12 @@ module.exports = function (app) {
                 if(user && user.facebook._id) return Promise.resolve(user); // no need to fill in info w/profile if user already has Facebook log-in
                 user = user || new User();
                 user = _.merge(user, { // use Facebook profile to fill out user info if it does not already exist
-                    email: user.email || profile && profile.emails && profile.emails[0] && profile.emails[0].value,
+                    email: user.email || profile && profile.emails && profile.emails[0] && profile.emails[0].value, // in case user has not provided email
                     // firstName: user.firstName || profile.name.givenName,
                     // lastName: user.lastName || profile.name.familyName,
                     facebook: {
                       _id: profile.id,
-                      photo: profile && profile.photos && profile.photos[0] && profile.photos[0].value,
+                      photo: profile.photos[0].value,
                       link: profile.profileUrl
                     }
                 });
@@ -49,11 +49,10 @@ module.exports = function (app) {
 
     app.get('/auth/facebook/callback',
         passport.authenticate('facebook', {
-          failureRedirect: '/',
-          scope: 'email'
+          failureRedirect: '/'
         }),
         function (req, res) {
-            res.json(JSON.stringify(req.user));
+            res.redirect('/');
         });
 
 };

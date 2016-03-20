@@ -16,7 +16,7 @@ module.exports = function (app) {
 
     var verifyCallback = function (accessToken, refreshToken, profile, done) {
         User.findOneAsync({
-                'email': profile.emails[0].value
+                'email': profile && profile.emails && profile.emails[0] && profile.emails[0].value
             })
             .then((user) => {
                 if(user && user.facebook._id) return Promise.resolve(user); // no need to fill in info w/profile if user already has Facebook log-in

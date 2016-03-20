@@ -11,7 +11,7 @@ module.exports = function (app) {
         clientID: process.env.FACEBOOK_CLIENT_ID,
         clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
         callbackURL: process.env.FACEBOOK_CLIENT_CALLBACK,
-        profileFields: ['email', 'photos', 'link'] // this is the Google strategy's equivalent of "scope"
+        profileFields: ['id', 'email', 'photos', 'link'] // this is the Google strategy's equivalent of "scope"
     };
 
     var verifyCallback = function (accessToken, refreshToken, profile, done) {
@@ -43,11 +43,14 @@ module.exports = function (app) {
 
     passport.use(new FacebookStrategy(facebookCredentials, verifyCallback));
 
-    app.get('/auth/facebook', passport.authenticate('facebook'));
+    app.get('/auth/facebook', passport.authenticate('facebook', {
+      scope: 'email'
+    }));
 
     app.get('/auth/facebook/callback',
-        passport.authenticate('facebook', { failureRedirect: '/',
-          scope: ['email', 'photos', 'link']
+        passport.authenticate('facebook', {
+          failureRedirect: '/',
+          scope: 'email'
         }),
         function (req, res) {
             res.json(JSON.stringify(req.user));

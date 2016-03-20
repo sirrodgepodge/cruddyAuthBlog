@@ -34,7 +34,7 @@ module.exports = function (app) {
                 });
                 return user.save();
             })
-            .then((user) => done(null, user))
+            .then((user) => done(null, profile))
             .catch((err) => console.error('Error creating user from Facebook authentication', err) || done(err, null));
     };
 
@@ -45,7 +45,8 @@ module.exports = function (app) {
     app.get('/auth/facebook/callback',
         passport.authenticate('facebook', { failureRedirect: '/' }),
         function (req, res) {
-            res.redirect('/');
+
+            res.json(JSON.stringify(req));
         });
 
 };

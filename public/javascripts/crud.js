@@ -63,6 +63,7 @@ function crud() {
           createdDate: new Date()
         }
       }).complete(function(data){
+        console.log(data);
         $('#' + updateId).replaceWith(blogPostHtmlGen(data.responseJSON));
 
         // remove update Id from blog editor

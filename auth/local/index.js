@@ -42,7 +42,6 @@ module.exports = function (app) {
                 User.findOneAsync({ 'email': req.body.email })
                     .then(foundUser => {
                       if(foundUser) {
-                        console.log('foundUser',foundUser);
                         console.log('adding password to existing user');
                         foundUser.password = req.body.password;
                         return foundUser.saveAsync();
@@ -51,8 +50,7 @@ module.exports = function (app) {
                         return (new User(req.body)).saveAsync();
                       }
                     }).then(storedUser => {
-                      console.log('storedUser',storedUser);
-                      res.status(200).json(_.merge(_.omit(storedUser[0].toObject(), ['password','salt']),{
+                      res.status(200).json(_.merge(_.omit((storedUser[0] || storedUser).toObject(), ['password','salt']),{
                         hasPassword: true
                       }));
                     });

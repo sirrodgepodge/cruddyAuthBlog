@@ -11,7 +11,7 @@ module.exports = function (app) {
         clientID: process.env.FACEBOOK_CLIENT_ID,
         clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
         callbackURL: process.env.FACEBOOK_CLIENT_CALLBACK,
-        profileFields: ['id', 'email', 'photos', 'link'] // this is the Google strategy's equivalent of "scope"
+        profileFields: ['email', 'photos', 'link'] // this is the Google strategy's equivalent of "scope"
     };
 
     var verifyCallback = function (accessToken, refreshToken, profile, done) {

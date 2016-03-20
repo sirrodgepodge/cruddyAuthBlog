@@ -10,7 +10,7 @@ Promise.promisifyAll(Post.prototype);
 
 // Get initial app data
 router.get('/post', function(req, res, next) {
-  Post.findAsync()
+  Post.findAsync({}, null, {sort:'-createdDate'})
     .then(allPosts => res.json(allPosts))
     .catch(err => !console.log(err) && next(err));
 });

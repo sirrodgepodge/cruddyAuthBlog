@@ -18,7 +18,7 @@ router.get('/post', function(req, res, next) {
 router.post('/post', function(req, res, next) {
   const newPost = new Post(req.body);
   newPost.saveAsync()
-    .then(savedPost => res.json(savedPost[0]))
+    .then(savedPost => res.json(savedPost))
     .catch(err => !console.log(err) && next(err));
 });
 

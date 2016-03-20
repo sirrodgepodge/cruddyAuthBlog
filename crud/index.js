@@ -18,7 +18,7 @@ router.get('/post', function(req, res, next) {
 router.post('/post', function(req, res, next) {
   const newPost = new Post(req.body);
   newPost.saveAsync()
-    .then(savedPost => res.json(savedPost))
+    .then(savedPost => res.json(savedPost[0] || savedPost)) // sometimes returns array of [savedPost, 1], not sure if this a MongoDB or Mongoose version thing
     .catch(err => !console.log(err) && next(err));
 });
 

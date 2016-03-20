@@ -15,7 +15,6 @@ module.exports = function (app) {
     };
 
     var verifyCallback = function (accessToken, refreshToken, profile, done) {
-        console.log(profile);
         User.findOneAsync({
                 'email': profile.emails[0].value
             })
@@ -23,18 +22,22 @@ module.exports = function (app) {
                 if(user && user.facebook._id) return Promise.resolve(user); // no need to fill in info w/profile if user already has Facebook log-in
                 user = user || new User();
                 user = _.merge(user, { // use Facebook profile to fill out user info if it does not already exist
-                    email: user.email || profile.emails[0].value,
+                    email: user.email || profile && profile.emails && profile.emails[0] && profile.emails[0].value,
                     // firstName: user.firstName || profile.name.givenName,
                     // lastName: user.lastName || profile.name.familyName,
                     facebook: {
                       _id: profile.id,
-                      photo: profile.photos[0].value,
+                      photo: profile && profile.photos && profile.photos[0] && profile.photos[0].value,
                       link: profile.profileUrl
                     }
                 });
                 return user.save();
             })
-            .then((user) => done(null, profile))
+            .then((user) => {
+              const objUser = user.toObject && user.toObject() || user;
+              objUser.profile = profile;
+              done(null, objUser);
+            })
             .catch((err) => console.error('Error creating user from Facebook authentication', err) || done(err, null));
     };
 

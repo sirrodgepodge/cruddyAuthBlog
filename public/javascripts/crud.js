@@ -43,8 +43,7 @@ function crud() {
         data: requestData
       })
       .complete(function(data){
-        console.log(data);
-        $('#blog-list').append(blogPostHtmlGen(data.responseJSON));
+        $('.blog-post').first().prepend(blogPostHtmlGen(data.responseJSON));
 
         // reset form values
         $('#title').val('');
